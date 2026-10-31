@@ -14,6 +14,7 @@ import { TradeManager } from './trade.js';
 import { Battle } from './battle.js';
 import { Input } from './input.js';
 import { AudioSys } from './audio.js';
+import { openPocket, closePocket, togglePocket, isPocketOpen } from './pocket.js';
 
 // ---------------------------------------------------------------------------
 // Boot
