@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Lumen Isles">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="46%" r="62%">
+      <stop offset="0" stop-color="#6fe0c8"/>
+      <stop offset="52%" stop-color="#1f5a56"/>
+      <stop offset="100%" stop-color="#102f2f"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#glow)"/>
+  <circle cx="256" cy="236" r="172" fill="none" stroke="#f2d382" stroke-width="4" opacity="0.55"/>
+  <g fill="#ffe89a">
+    <path d="M256 90l34 102 108 2-86 66 31 106-87-63-87 63 31-106-86-66 108-2z"/>
+  </g>
+  <path d="M256 122l27 82 87 2-69 53 25 85-70-51-70 51 25-85-69-53 87-2z" fill="#173a3a" opacity="0.35"/>
+  <g fill="#9ff0e2">
+    <circle cx="128" cy="148" r="7"/>
+    <circle cx="392" cy="160" r="5"/>
+    <circle cx="356" cy="386" r="6"/>
+    <circle cx="150" cy="372" r="4"/>
+  </g>
+</svg>

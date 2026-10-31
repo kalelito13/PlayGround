@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#173a3a" />
+  <meta name="description" content="Lumen Isles — a 3D creature-taming adventure. Explore a living island, befriend wild creatures and protect the ancient grove." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Lumen Isles" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Lumen Isles — 3D Creature Adventure</title>
+</head>
+<body class="loading">
+  <canvas id="game" aria-label="Lumen Isles 3D world"></canvas>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- In-game HUD                                                        -->
+  <!-- ------------------------------------------------------------------ -->
+  <div id="ui">
+    <div id="hud" class="hidden">
+      <div class="hud-top">
+        <div class="hud-left">
+          <div id="quest-card" class="quest-card">
+            <div class="quest-icon">✦</div>
+            <div class="quest-copy">
+              <span class="quest-kicker" data-i18n="hud.questKicker">NOTAS DE CAMPO</span>
+              <h3 id="quest-title" data-i18n="quest.1.title">Un nuevo naturalista</h3>
+              <p id="quest-desc" data-i18n="quest.1.desc">Hazte amigo de 3 criaturas distintas que vagan por Sunmeadow.</p>
+            </div>
+            <span id="quest-count" class="quest-count">0 / 3</span>
+          </div>
+          <div id="party-list" class="party-list" aria-label="Your team"></div>
+        </div>
+
+        <div class="hud-right">
+          <div class="icon-row">
+            <button id="btn-sound" class="icon-btn" aria-label="Toggle sound">♪</button>
+            <button id="btn-fullscreen" class="icon-btn" aria-label="Toggle fullscreen">⛶</button>
+            <button id="btn-shop" class="icon-btn" aria-label="Open Grove Market">✦</button>
+            <button id="btn-trade" class="icon-btn" aria-label="Open online trade">⇄</button>
+            <button id="btn-menu" class="icon-btn" aria-label="Open journal">☰</button>
+          </div>
+          <div class="resource-row">
+            <span class="resource" title="Lumen" data-i18n-title="hud.lumen"><i class="lumen-icon">✦</i><b id="lumen-count">180</b></span>
+            <button id="flute-chip" class="resource flute-chip" title="Current flute" data-i18n-title="hud.flute"><i class="flute-icon">♪</i><b id="flute-name">Willow</b></button>
+            <span class="resource" title="Grove Tonics" data-i18n-title="hud.tonics"><i class="potion-icon">+</i><b id="potion-count">2</b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="zone-hud">
+        <span id="zone-label" class="zone-label">Sunmeadow</span>
+        <button id="time-chip" class="time-chip" aria-label="Wait a while and advance time" data-i18n-title="hud.time">
+          <span id="time-icon" class="time-icon">☀</span>
+          <span id="time-text">08:00</span>
+          <small id="day-text">Día 1</small>
+        </button>
+      </div>
+
+      <div id="prompt" class="prompt">
+        <span id="prompt-text">Battle</span>
+        <kbd id="prompt-key">E</kbd>
+      </div>
+
+      <div id="joystick" class="joystick" aria-label="Movement joystick">
+        <div class="stick-ring"></div>
+        <div id="stick-knob" class="stick-knob"></div>
+      </div>
+
+      <div id="touch-actions" class="touch-actions">
+        <button id="btn-jump" class="round-btn jump-btn" aria-label="Jump">↑<span>JUMP</span></button>
+        <button id="btn-action" class="round-btn action-btn" aria-label="Interact">A<span>ACT</span></button>
+      </div>
+    </div>
+
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+  </div>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Title                                                              -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="title" class="screen title-screen hidden">
+    <div class="title-shade"></div>
+    <div class="title-top">
+      <span class="studio-badge" data-i18n="brand.studio">A 3D COLLECTION ADVENTURE</span>
+      <div id="lang-picker" class="language-picker" role="group" aria-label="Language">
+        <button type="button" data-lang="es" class="lang-btn" title="Español">🇪🇸<span>ES</span></button>
+        <button type="button" data-lang="en" class="lang-btn" title="English">🇬🇧<span>EN</span></button>
+        <button type="button" data-lang="pt" class="lang-btn" title="Português">🇧🇷<span>PT</span></button>
+        <button type="button" data-lang="fr" class="lang-btn" title="Français">🇫🇷<span>FR</span></button>
+      </div>
+    </div>
+    <div class="title-content">
+      <div class="logo-mark">
+        <span class="logo-star">✦</span>
+        <span class="logo-ring"></span>
+      </div>
+      <h1 class="logo game-logo">
+        <span data-i18n="brand.line1">COLECCIÓN DE</span>
+        <span data-i18n="brand.line2">MONSTRUOS</span>
+        <span data-i18n="brand.line3">MUNDIAL</span>
+      </h1>
+      <p class="tagline" data-i18n="brand.tagline">Explora. Haz amigos. Protege el bosque.</p>
+      <div class="title-actions">
+        <button id="btn-new" class="primary-btn big-btn"><span class="big-label" data-i18n="title.new">Nueva aventura</span><span data-i18n="title.newSub">Empieza tu cuaderno de campo</span></button>
+        <button id="btn-continue" class="ghost-btn big-btn" disabled><span class="big-label" data-i18n="title.continue">Continuar</span><span id="continue-meta" data-i18n="title.noJourney">Aún no hay aventura</span></button>
+        <button id="btn-title-help" class="text-btn" data-i18n="title.help">Cómo jugar</button>
+      </div>
+      <p class="title-foot" data-i18n="brand.foot">Controles táctiles · Instalable en Android · Guardado en el dispositivo</p>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Starter choice                                                     -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="starter" class="screen starter-screen hidden">
+    <div class="starter-head">
+      <span class="kicker" data-i18n="starter.kicker">ELIGE UN COMPAÑERO</span>
+      <h2 data-i18n="starter.title">¿Quién caminará contigo?</h2>
+      <p data-i18n="starter.desc">Tres criaturas jóvenes esperan al borde de Sunmeadow.</p>
+    </div>
+    <div id="starter-grid" class="starter-grid"></div>
+    <p class="starter-foot" data-i18n="starter.foot">Toda aventura empieza con un amigo. Fuera esperan muchos más.</p>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Battle                                                             -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="battle" class="battle hidden" aria-label="Battle">
+    <div class="battle-bg"></div>
+    <div class="battle-top">
+      <div class="battle-kicker" id="battle-kicker">WILD ENCOUNTER</div>
+      <div id="battle-party" class="battle-party"></div>
+    </div>
+
+    <div id="enemy-card" class="battle-card enemy-card">
+      <div class="battle-card-head">
+        <span id="enemy-name">Mossling</span>
+        <span id="enemy-lv" class="lv">Lv. 4</span>
+      </div>
+      <div class="hp-row">
+        <span class="hp-label">HP</span>
+        <div class="hp-track"><div id="enemy-hp-fill" class="hp-fill"></div></div>
+        <span id="enemy-hp-text" class="hp-text">24/24</span>
+      </div>
+      <div class="battle-card-foot">
+        <div id="enemy-types" class="type-row"></div>
+        <span id="enemy-status" class="status-flag"></span>
+      </div>
+    </div>
+
+    <div id="player-card" class="battle-card player-card">
+      <div class="battle-card-head">
+        <span id="player-name">Spriglet</span>
+        <span id="player-lv" class="lv">Lv. 5</span>
+      </div>
+      <div class="hp-row">
+        <span class="hp-label">HP</span>
+        <div class="hp-track"><div id="player-hp-fill" class="hp-fill"></div></div>
+        <span id="player-hp-text" class="hp-text">42/42</span>
+      </div>
+      <div class="exp-row">
+        <span>XP</span>
+        <div class="exp-track"><div id="player-exp-fill"></div></div>
+        <span id="player-exp-text">0/88</span>
+      </div>
+      <div class="battle-card-foot">
+        <div id="player-types" class="type-row"></div>
+        <span id="player-status" class="status-flag"></span>
+      </div>
+    </div>
+
+    <div class="battle-bottom">
+      <div id="battle-log" class="battle-log">The grass rustles…</div>
+      <div id="battle-actions" class="battle-actions"></div>
+    </div>
+
+    <div id="battle-floats" class="battle-floats"></div>
+    <div id="battle-flash" class="battle-flash"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Journal / help modal                                               -->
+  <!-- ------------------------------------------------------------------ -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button id="modal-close" class="icon-btn close-btn" aria-label="Close" data-i18n-aria="common.close">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Ending                                                             -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="ending" class="ending-screen hidden">
+    <div class="ending-card">
+      <span class="kicker" data-i18n="ending.kicker">EL BOSQUE RECUERDA</span>
+      <h2 data-i18n="ending.title">Islas restauradas</h2>
+      <p data-i18n="ending.text">El Guardián Verde baja la cornamenta. La luz atraviesa el dosel y todas las criaturas de Lumen Isles levantan la cabeza a la vez. Tu cuaderno ya no está en blanco.</p>
+      <div id="ending-stats" class="ending-stats"></div>
+      <button id="btn-ending-continue" class="primary-btn big-btn"><span class="big-label" data-i18n="ending.keep">Seguir explorando</span><span data-i18n="ending.keepSub">Todavía hay nuevos amigos ahí fuera</span></button>
+    </div>
+  </section>
+
+  <div id="screen-flash" class="screen-flash"></div>
+
+  <div id="loading" class="loading-screen">
+    <div class="loading-star">✦</div>
+    <h1 data-i18n="loading.title">COLECCIÓN DE MONSTRUOS MUNDIAL</h1>
+    <p data-i18n="loading.text">Despertando el bosque…</p>
+    <div class="loader"><i></i></div>
+  </div>
+
+  <noscript><p style="color:#fff;padding:2rem">Lumen Isles needs JavaScript and WebGL.</p></noscript>
+  <script src="vendor/peerjs.min.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
