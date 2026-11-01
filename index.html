@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#061116">
+  <meta name="description" content="NEXO: Guardianes de Vértice — RPG de captura de criaturas en mundo abierto con 158 especies, mazmorras, clima dinámico y coliseo.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NEXO · Guardianes de Vértice</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app">
+    <canvas id="world-canvas" aria-label="Mundo de Vértice"></canvas>
+    <canvas id="fx-canvas" aria-hidden="true"></canvas>
+    <div id="night-vignette" aria-hidden="true"></div>
+
+    <!-- TITLE -->
+    <section id="title-screen" class="screen">
+      <canvas id="title-canvas" aria-hidden="true"></canvas>
+      <div class="lang-corner">
+        <button class="btn btn-ghost btn-sm" id="title-lang-btn" aria-label="Cambiar idioma">🌐 <span>Español</span></button>
+      </div>
+      <div class="title-content">
+        <div class="title-copy">
+          <div class="eyebrow" id="title-eyebrow">Un RPG de criaturas y vínculos</div>
+          <h1 class="title-logo" id="title-logo">NEXO</h1>
+          <p class="title-sub" id="title-sub">GUARDIANES DE VÉRTICE</p>
+          <p class="title-desc" id="title-desc">Captura criaturas imposibles, explora un mundo que cambia con el clima y forja un vínculo que desafíe al eclipse.</p>
+          <div class="title-actions">
+            <button class="btn btn-primary" id="btn-new">Nueva partida</button>
+            <button class="btn btn-teal" id="btn-continue">Continuar</button>
+            <button class="btn btn-ghost" id="btn-help">Cómo jugar</button>
+          </div>
+          <div class="title-features" id="title-features">
+            <span>Captura con trampas</span>
+            <span>Evoluciones</span>
+            <span>Clima dinámico</span>
+            <span>PvP por invitación</span>
+          </div>
+        </div>
+        <div class="title-art" aria-hidden="true">
+          <canvas id="title-monster"></canvas>
+        </div>
+      </div>
+      <div class="title-footer">
+        <span id="title-footer">MUNDO ABIERTO · 158 CRIATURAS · MAZMORRAS · COLISEO</span>
+        <span>Un mundo original de Vértice · v1.0</span>
+      </div>
+    </section>
+
+    <!-- STARTER -->
+    <section id="starter-screen" class="screen" hidden>
+      <div class="starter-wrap">
+        <div class="eyebrow" style="justify-content:center">El Nexo te ha elegido</div>
+        <h2 class="starter-title" id="starter-title">ELIGE TU PRIMER VÍNCULO</h2>
+        <p class="starter-desc" id="starter-desc">No hay elección incorrecta. Hay tres formas distintas de empezar una leyenda.</p>
+        <div class="starter-grid" id="starter-grid"></div>
+        <div class="starter-bottom">
+          <div class="name-field">
+            <label for="player-name" id="name-label">Nombre del guardián</label>
+            <input id="player-name" maxlength="16" value="Aria" autocomplete="off" spellcheck="false">
+          </div>
+          <button class="btn btn-primary" id="btn-start-game">Comenzar la aventura</button>
+        </div>
+        <p class="faint" style="font-size:10px;margin-top:14px" id="starter-hint">Podrás capturar, evolucionar y entrenar a más de 150 criaturas.</p>
+      </div>
+    </section>
+
+    <!-- HUD -->
+    <div id="hud" hidden>
+      <header class="top-hud">
+        <div class="brand-chip">
+          <div class="brand-mark">N</div>
+          <div><b>NEXO</b><small>GUARDIANS OF VÉRTICE</small></div>
+        </div>
+        <div class="player-card">
+          <div class="player-avatar" id="player-avatar">A</div>
+          <div class="player-meta">
+            <strong id="hud-player-name">Aria</strong>
+            <span id="hud-player-title">Novato del Nexo</span>
+          </div>
+          <div class="player-resources">
+            <div class="resource"><b id="hud-coins">320</b><span id="hud-coins-label">Monedas</span></div>
+            <div class="resource"><b id="hud-shards">0</b><span id="hud-shards-label">Fragmentos</span></div>
+          </div>
+        </div>
+        <div class="world-chip">
+          <div class="weather-icon" id="hud-weather-icon">☀</div>
+          <div class="world-copy">
+            <strong id="hud-zone">Pradera de Vértice</strong>
+            <span id="hud-weather">Despejado · Día 1</span>
+          </div>
+          <div class="world-time">
+            <b id="hud-time">08:24</b>
+            <span id="hud-phase">Mañana</span>
+          </div>
+        </div>
+        <nav class="hud-menu" aria-label="Menú del juego">
+          <button class="menu-btn" id="menu-map" data-menu="map"><span>◈</span><small>Mapa</small></button>
+          <button class="menu-btn" id="menu-ranch" data-menu="ranch"><span>⌂</span><small>Rancho</small></button>
+          <button class="menu-btn" id="menu-journal" data-menu="journal"><span>▤</span><small>Diario</small></button>
+          <button class="menu-btn" id="menu-codex" data-menu="codex"><span>✧</span><small>Códice</small></button>
+          <button class="menu-btn" id="menu-arena" data-menu="arena"><span>⚔</span><small>Coliseo</small></button>
+          <button class="menu-btn" id="menu-inventory" data-menu="inventory"><span>▣</span><small>Mochila</small></button>
+          <button class="menu-btn" id="menu-settings" data-menu="settings"><span>⚙</span><small>Ajustes</small></button>
+        </nav>
+      </header>
+
+      <aside id="quest-tracker">
+        <div class="quest-kicker"><span id="quest-kicker">Misión principal</span><small id="quest-chapter">01</small></div>
+        <div class="quest-title" id="quest-title">El Despertar del Nexo</div>
+        <div class="quest-objective" id="quest-objective">Habla con la Maestra Sol en el Rancho Vértice.</div>
+        <div class="quest-progress"><i id="quest-bar" style="width:0%"></i></div>
+        <div class="quest-side" id="quest-side" hidden>
+          <span id="quest-side-label">Misión secundaria</span>
+          <b id="quest-side-title"></b>
+          <div class="quest-ready" id="quest-side-ready" hidden>¡Listo para entregar!</div>
+        </div>
+      </aside>
+
+      <div id="minimap-wrap"><canvas id="minimap" width="276" height="196"></canvas><span class="minimap-label">VÉRTICE</span></div>
+      <div id="zone-banner"><b></b><span></span></div>
+      <div id="event-banner" hidden></div>
+      <div id="interaction-prompt"><span class="prompt-key">E</span><div><b>Hablar</b><small>Maestra Sol</small></div></div>
+
+      <div id="party-dock"></div>
+      <div id="action-dock">
+        <button class="action-btn primary" id="action-interact"><span>◎</span><small>Interactuar</small></button>
+        <button class="action-btn" id="action-team"><span>♟</span><small>Equipo</small></button>
+        <button class="action-btn" id="action-bag"><span>▣</span><small>Mochila</small></button>
+        <button class="action-btn" id="action-camp"><span>⌂</span><small>Descanso</small></button>
+      </div>
+      <div id="joystick" aria-label="Joystick de movimiento"><div class="stick"></div></div>
+      <button id="touch-run" aria-label="Correr">Correr</button>
+      <div class="save-dot" id="save-dot"></div>
+    </div>
+
+    <div id="toast-stack" aria-live="polite"></div>
+    <div id="modal-root"></div>
+
+    <!-- BATTLE -->
+    <section id="battle-root" hidden>
+      <canvas id="battle-canvas"></canvas>
+      <div class="battle-ui">
+        <div class="battle-top">
+          <div class="battler-panel enemy" id="enemy-panel">
+            <div class="battler-head"><h3 id="enemy-name">Criatura</h3><span class="lv" id="enemy-level">Nv 5</span></div>
+            <div class="hp-line"><div class="bar"><i id="enemy-hp-bar" style="width:100%;background:var(--danger)"></i></div><span class="hp-text" id="enemy-hp-text">100 / 100</span></div>
+            <div class="battler-sub" id="enemy-sub"></div>
+          </div>
+          <div class="battler-panel" id="player-panel">
+            <div class="battler-head"><h3 id="battle-player-name">Criatura</h3><span class="lv" id="battle-player-level">Nv 5</span></div>
+            <div class="hp-line"><div class="bar"><i id="battle-player-hp-bar" style="width:100%;background:var(--green)"></i></div><span class="hp-text" id="battle-player-hp-text">100 / 100</span></div>
+            <div class="battler-sub" id="battle-player-sub"></div>
+          </div>
+        </div>
+        <div class="battle-weather" id="battle-weather"></div>
+        <div class="battle-center">
+          <div class="battle-mon enemy" id="battle-mon-enemy"><canvas id="battle-enemy-canvas" width="340" height="340"></canvas><div class="mon-shadow"></div></div>
+          <div class="battle-vs">VS</div>
+          <div class="battle-mon player" id="battle-mon-player"><canvas id="battle-player-canvas" width="340" height="340"></canvas><div class="mon-shadow"></div></div>
+        </div>
+        <div class="battle-log" id="battle-log"></div>
+        <div class="battle-banner" id="battle-banner"><b></b><span></span></div>
+        <div class="battle-subpanel" id="battle-subpanel" hidden></div>
+        <div class="battle-deck" id="battle-deck">
+          <div class="battle-deck-inner">
+            <div class="move-grid" id="move-grid"></div>
+            <div class="battle-side">
+              <button class="btn btn-teal" id="battle-capture" data-action="capture">◈ <span>Capturar</span></button>
+              <button class="btn" id="battle-items" data-action="items">🧪 <span>Objetos</span></button>
+              <button class="btn" id="battle-switch" data-action="switch">♟ <span>Cambiar</span></button>
+              <button class="btn btn-ghost" id="battle-flee" data-action="flee">↩ <span>Huir</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="transition-flash"></div>
+    <div id="loading-screen"><div class="loader-ring"></div><span>Abriendo el Nexo…</span></div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
